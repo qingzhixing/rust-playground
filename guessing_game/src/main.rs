@@ -27,9 +27,15 @@ fn main() {
 
     println!("The secret number is between 1 and {}", range_max);
 
+    // 添加辅助提示
+    let mut assist_min = 1;
+    let mut assist_max = range_max;
+
     loop {
-        print!("Please guess the secret number:");
-        io::stdout().flush().unwrap(); // 调用flush强制刷新标准输出
+        println!(
+            "Please guess the secret number ( {} - {} ):",
+            assist_min, assist_max
+        );
 
         let mut guess_str = String::new();
         io::stdin()
@@ -45,12 +51,22 @@ fn main() {
         };
 
         match guess.cmp(&secret_number) {
-            std::cmp::Ordering::Less => println!("Too small!"),
+            std::cmp::Ordering::Less => {
+                println!("Too small!");
+                if guess >= assist_min && guess <= assist_max {
+                    assist_min = guess + 1;
+                }
+            }
             std::cmp::Ordering::Equal => {
                 println!("You guessed the secret number!");
                 break;
             }
-            std::cmp::Ordering::Greater => println!("Too big!"),
+            std::cmp::Ordering::Greater => {
+                println!("Too big!");
+                if guess <= assist_max && guess >= assist_min {
+                    assist_max = guess - 1;
+                }
+            }
         }
     }
 }
