@@ -9,6 +9,12 @@ fn main() {
         std::process::exit(1);
     });
 
+    println!(
+        "Searching for {query} in file {file_path}",
+        query = config.query,
+        file_path = config.file_path
+    );
+
     let content =
         fs::read_to_string(&config.file_path).expect("should have been able to file content");
 
