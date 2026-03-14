@@ -16,11 +16,11 @@ impl Config {
     }
 }
 
-pub fn search(query: &str, content: &str) -> Vec<String> {
+pub fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
     let mut results = Vec::new();
     for line in content.lines() {
         if line.contains(query) {
-            results.push(line.to_string());
+            results.push(line);
         }
     }
     results
