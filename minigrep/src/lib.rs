@@ -15,3 +15,13 @@ impl Config {
         Ok(Config { query, file_path })
     }
 }
+
+pub fn search(config: &Config, content: &str) -> Vec<String> {
+    let mut results = Vec::new();
+    for line in content.lines() {
+        if line.contains(&config.query) {
+            results.push(line.to_string());
+        }
+    }
+    results
+}
