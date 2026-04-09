@@ -37,7 +37,7 @@ impl App {
     pub fn run(&mut self, terminal: &mut ratatui::DefaultTerminal) -> color_eyre::Result<()> {
         loop {
             terminal.draw(|frame| {
-                Ui::new().draw(frame, self).unwrap();
+                Ui::new(self).draw(frame).unwrap();
             })?;
             if crossterm::event::read()?.is_key_press() {
                 break;
