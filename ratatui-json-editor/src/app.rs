@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use ratatui::crossterm;
+
 use crate::ui::Ui;
 
 pub enum CurrentScreen {
@@ -33,9 +35,14 @@ impl App {
     }
 
     pub fn run(&mut self, terminal: &mut ratatui::DefaultTerminal) -> color_eyre::Result<()> {
-        terminal.draw(|frame| {
-            Ui::new().draw(frame, self).unwrap();
-        })?;
+        loop {
+            terminal.draw(|frame| {
+                Ui::new().draw(frame, self).unwrap();
+            })?;
+            if crossterm::event::read()?.is_key_press() {
+                break;
+            }
+        }
         Ok(())
     }
 
