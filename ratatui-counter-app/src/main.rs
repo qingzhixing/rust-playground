@@ -126,4 +126,18 @@ mod tests {
 
         assert_eq!(buf, expected);
     }
+
+    #[test]
+    fn handle_key_event() {
+        let mut app = App::default();
+        app.handle_key_event(KeyCode::Right.into());
+        assert_eq!(app.counter, 1);
+
+        app.handle_key_event(KeyCode::Left.into());
+        assert_eq!(app.counter, 0);
+
+        let mut app = App::default();
+        app.handle_key_event(KeyCode::Char('q').into());
+        assert!(app.exit);
+    }
 }
