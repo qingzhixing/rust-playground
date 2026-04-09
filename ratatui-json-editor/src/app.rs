@@ -1,3 +1,7 @@
+use std::collections::HashMap;
+
+use crate::ui::Ui;
+
 pub enum CurrentScreen {
     Main,
     Editing,
@@ -28,6 +32,13 @@ impl App {
         }
     }
 
+    pub fn run(&mut self, terminal: &mut ratatui::DefaultTerminal) -> color_eyre::Result<()> {
+        terminal.draw(|frame| {
+            Ui::new().draw(frame, self).unwrap();
+        })?;
+        Ok(())
+    }
+
     pub fn save_key_value(&mut self) {
         self.pairs
             .insert(self.key_input.clone(), self.value_input.clone());
@@ -38,7 +49,7 @@ impl App {
     }
 
     pub fn toggle_editing(&mut self) {
-        if let Some(edit_mode) = self.currently_editing {
+        if let Some(edit_mode) = &self.currently_editing {
             self.currently_editing = match edit_mode {
                 CurrentEditing::Key => Some(CurrentEditing::Value),
                 CurrentEditing::Value => Some(CurrentEditing::Key),
