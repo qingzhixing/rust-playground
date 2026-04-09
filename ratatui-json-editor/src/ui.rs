@@ -3,7 +3,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style},
     text::{Line, Span, Text},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
+    widgets::{Block, Borders, Clear, List, ListItem, Paragraph, Wrap},
 };
 
 use crate::context::{Context, CurrentEditing, CurrentScreen};
@@ -123,9 +123,68 @@ impl<'a> Ui<'a> {
         Ok(())
     }
 
+    fn draw_popup_screen(&self, frame: &mut Frame) -> color_eyre::Result<()> {
+        if let Some(editing) = &self.context.currently_editing {
+            let popup_block = Block::default()
+                .title("Enter a new key-value pair")
+                .borders(Borders::NONE)
+                .style(Style::default().bg(Color::DarkGray));
+            let area = centered_rect(60, 25, frame.area());
+            frame.render_widget(popup_block, area);
+
+            let popup_chunks = Layout::default()
+                .direction(Direction::Horizontal)
+                .margin(1)
+                .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
+                .split(area);
+
+            let mut key_block = Block::default().title("Key").borders(Borders::ALL);
+            let mut value_block = Block::default().title("Value").borders(Borders::ALL);
+
+            let active_style = Style::default().bg(Color::LightYellow).fg(Color::Black);
+
+            match editing {
+                CurrentEditing::Key => key_block = key_block.style(active_style),
+                CurrentEditing::Value => value_block = value_block.style(active_style),
+            };
+
+            let key_text = Paragraph::new(self.context.key_input.clone()).block(key_block);
+            frame.render_widget(key_text, popup_chunks[0]);
+
+            let value_text = Paragraph::new(self.context.value_input.clone()).block(value_block);
+            frame.render_widget(value_text, popup_chunks[1]);
+        }
+
+        Ok(())
+    }
+
+    fn draw_exiting_screen(&self, frame: &mut Frame) -> color_eyre::Result<()> {
+        if let CurrentScreen::Exiting = self.context.current_screen {
+            frame.render_widget(Clear, frame.area()); //this clears the entire screen and anything already drawn
+            let popup_block = Block::default()
+                .title("Y/N")
+                .borders(Borders::NONE)
+                .style(Style::default().bg(Color::DarkGray));
+
+            let exit_text = Text::styled(
+                "Would you like to output the buffer as json? (y/n)",
+                Style::default().fg(Color::Red),
+            );
+            // the `trim: false` will stop the text from being cut off when over the edge of the block
+            let exit_paragraph = Paragraph::new(exit_text)
+                .block(popup_block)
+                .wrap(Wrap { trim: false });
+
+            let area = centered_rect(60, 25, frame.area());
+            frame.render_widget(exit_paragraph, area);
+        }
+        Ok(())
+    }
+
     pub fn draw(&self, frame: &mut Frame) -> color_eyre::Result<()> {
         self.draw_main_screen(frame).unwrap();
-
+        self.draw_popup_screen(frame).unwrap();
+        self.draw_exiting_screen(frame).unwrap();
         Ok(())
     }
 }
