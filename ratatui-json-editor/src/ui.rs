@@ -2,7 +2,9 @@ use ratatui::{
     Frame,
     buffer::Buffer,
     layout::{Constraint, Direction, Layout, Rect},
-    widgets::{Paragraph, Widget},
+    style::{Color, Style},
+    text::Text,
+    widgets::{Block, Borders, Paragraph, Widget},
 };
 
 use crate::app;
@@ -30,6 +32,18 @@ impl Widget for &Ui {
                 Constraint::Length(3),
             ])
             .split(area);
+
+        let title_block = Block::default()
+            .borders(Borders::ALL)
+            .style(Style::default());
+
+        let title = Paragraph::new(Text::styled(
+            "Create New Json",
+            Style::default().fg(Color::Green),
+        ))
+        .block(title_block);
+
+        title.render(chunks[0], buffer);
     }
 }
 
