@@ -6,15 +6,15 @@ use ratatui::{
     widgets::{Block, Borders, List, ListItem, Paragraph},
 };
 
-use crate::app::{self, CurrentEditing, CurrentScreen};
+use crate::context::{Context, CurrentEditing, CurrentScreen};
 
 pub struct Ui<'a> {
-    pub app: &'a mut app::App,
+    pub context: &'a Context,
 }
 
 impl<'a> Ui<'a> {
-    pub fn new(app: &'a mut app::App) -> Self {
-        Self { app }
+    pub fn new(context: &'a Context) -> Self {
+        Self { context }
     }
 
     fn draw_main_screen(&self, frame: &mut Frame) -> color_eyre::Result<()> {
@@ -43,9 +43,9 @@ impl<'a> Ui<'a> {
         // Draw list block
         let mut list_items = Vec::<ListItem>::new();
 
-        for key in self.app.pairs.keys() {
+        for key in self.context.pairs.keys() {
             list_items.push(ListItem::new(Line::from(Span::styled(
-                format!("{: <25} : {}", key, self.app.pairs.get(key).unwrap()),
+                format!("{: <25} : {}", key, self.context.pairs.get(key).unwrap()),
                 Style::default().fg(Color::Yellow),
             ))));
         }
@@ -57,7 +57,7 @@ impl<'a> Ui<'a> {
         // Draw navigation block
         let current_navigation_text = vec![
             // The first half of the text
-            match self.app.current_screen {
+            match self.context.current_screen {
                 CurrentScreen::Main => {
                     Span::styled("Normal Mode", Style::default().fg(Color::Green))
                 }
@@ -73,7 +73,7 @@ impl<'a> Ui<'a> {
             Span::styled(" | ", Style::default().fg(Color::White)),
             // The final section of the text, with hints on what the user is editing
             {
-                if let Some(editing) = &self.app.currently_editing {
+                if let Some(editing) = &self.context.currently_editing {
                     match editing {
                         CurrentEditing::Key => {
                             Span::styled("Editing Json Key", Style::default().fg(Color::Green))
@@ -93,7 +93,7 @@ impl<'a> Ui<'a> {
             .block(Block::default().borders(Borders::ALL));
 
         let current_keys_hint = {
-            match self.app.current_screen {
+            match self.context.current_screen {
                 CurrentScreen::Main => Span::styled(
                     "(q) to quit / (e) to make new pair",
                     Style::default().fg(Color::Red),
@@ -123,7 +123,7 @@ impl<'a> Ui<'a> {
         Ok(())
     }
 
-    pub fn draw(&mut self, frame: &mut Frame) -> color_eyre::Result<()> {
+    pub fn draw(&self, frame: &mut Frame) -> color_eyre::Result<()> {
         self.draw_main_screen(frame).unwrap();
 
         Ok(())

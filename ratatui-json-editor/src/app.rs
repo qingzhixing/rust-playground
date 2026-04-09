@@ -1,43 +1,24 @@
-use std::collections::HashMap;
-
 use ratatui::crossterm;
 
+use crate::context::{Context, CurrentEditing};
 use crate::ui::Ui;
 
-pub enum CurrentScreen {
-    Main,
-    Editing,
-    Exiting,
-}
-
-pub enum CurrentEditing {
-    Key,
-    Value,
-}
-
 pub struct App {
-    pub key_input: String,              // the currently being edited json key.
-    pub value_input: String,            // the currently being edited json value.
-    pub pairs: HashMap<String, String>, // The representation of our key and value pairs with serde Serialize support
-    pub current_screen: CurrentScreen, // the current screen the user is looking at, and will later determine what is rendered.
-    pub currently_editing: Option<CurrentEditing>, // the optional state containing which of the key or value pair the user is editing. It is an option, because when the user is not directly editing a key-value pair, this will be set to `None`.
+    pub context: Context,
 }
 
 impl App {
     pub fn new() -> Self {
         Self {
-            key_input: String::new(),
-            value_input: String::new(),
-            pairs: HashMap::new(),
-            current_screen: CurrentScreen::Main,
-            currently_editing: None,
+            context: Context::new(),
         }
     }
 
     pub fn run(&mut self, terminal: &mut ratatui::DefaultTerminal) -> color_eyre::Result<()> {
+        let ui = Ui::new(&mut self.context);
         loop {
             terminal.draw(|frame| {
-                Ui::new(self).draw(frame).unwrap();
+                ui.draw(frame).unwrap();
             })?;
             if crossterm::event::read()?.is_key_press() {
                 break;
@@ -47,27 +28,29 @@ impl App {
     }
 
     pub fn save_key_value(&mut self) {
-        self.pairs
-            .insert(self.key_input.clone(), self.value_input.clone());
+        self.context.pairs.insert(
+            self.context.key_input.clone(),
+            self.context.value_input.clone(),
+        );
 
-        self.key_input = String::new();
-        self.value_input = String::new();
-        self.currently_editing = None;
+        self.context.key_input = String::new();
+        self.context.value_input = String::new();
+        self.context.currently_editing = None;
     }
 
     pub fn toggle_editing(&mut self) {
-        if let Some(edit_mode) = &self.currently_editing {
-            self.currently_editing = match edit_mode {
+        if let Some(edit_mode) = &self.context.currently_editing {
+            self.context.currently_editing = match edit_mode {
                 CurrentEditing::Key => Some(CurrentEditing::Value),
                 CurrentEditing::Value => Some(CurrentEditing::Key),
             };
         } else {
-            self.currently_editing = Some(CurrentEditing::Key);
+            self.context.currently_editing = Some(CurrentEditing::Key);
         }
     }
 
     pub fn print_json(&self) -> color_eyre::Result<()> {
-        let output = serde_json::to_string_pretty(&self.pairs)?;
+        let output = serde_json::to_string_pretty(&self.context.pairs)?;
         println!("{output}");
         Ok(())
     }

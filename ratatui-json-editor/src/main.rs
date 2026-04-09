@@ -1,6 +1,7 @@
 use std::error::Error;
 
 mod app;
+mod context;
 mod ui;
 use app::App;
 
