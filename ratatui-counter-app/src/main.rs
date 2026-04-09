@@ -64,7 +64,15 @@ impl App {
     }
 
     fn handle_events(&mut self) -> io::Result<()> {
-        unimplemented!("handle_events method not implemented")
+        match event::read()? {
+            // it's important to check that the event is a key press event as
+            // crossterm also emits key release and repeat events on Windows.
+            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
+                self.handle_key_event(key_event)
+            }
+            _ => {}
+        };
+        Ok(())
     }
 }
 
