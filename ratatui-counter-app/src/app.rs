@@ -82,11 +82,11 @@ impl App {
     }
 
     fn increment_counter(&mut self) {
-        self.counter = self.counter.saturating_add(1);
+        self.counter = self.counter.wrapping_add(1);
     }
 
     fn decrement_counter(&mut self) {
-        self.counter = self.counter.saturating_sub(1);
+        self.counter = self.counter.wrapping_sub(1);
     }
 }
 
@@ -138,6 +138,6 @@ mod tests {
     fn handle_key_event_overflow() {
         let mut app = App::default();
         app.handle_key_event(KeyCode::Left.into());
-        assert_eq!(app.counter, 0);
+        assert_eq!(app.counter, 255);
     }
 }
