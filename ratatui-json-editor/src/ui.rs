@@ -17,7 +17,7 @@ impl<'a> Ui<'a> {
         Self { app }
     }
 
-    pub fn draw(&self, frame: &mut Frame) -> color_eyre::Result<()> {
+    fn draw_main_screen(&self, frame: &mut Frame) -> color_eyre::Result<()> {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
@@ -119,6 +119,12 @@ impl<'a> Ui<'a> {
 
         frame.render_widget(mode_footer, footer_chunks[0]);
         frame.render_widget(key_notes_footer, footer_chunks[1]);
+
+        Ok(())
+    }
+
+    pub fn draw(&mut self, frame: &mut Frame) -> color_eyre::Result<()> {
+        self.draw_main_screen(frame).unwrap();
 
         Ok(())
     }
