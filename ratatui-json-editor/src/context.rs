@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, ops::DerefMut};
 
 pub enum CurrentScreen {
     Main,

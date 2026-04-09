@@ -15,7 +15,7 @@ impl App {
     }
 
     pub fn run(&mut self, terminal: &mut ratatui::DefaultTerminal) -> color_eyre::Result<()> {
-        let ui = Ui::new(&mut self.context);
+        let ui = Ui::new(&self.context);
         loop {
             terminal.draw(|frame| {
                 ui.draw(frame).unwrap();
