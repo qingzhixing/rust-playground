@@ -15,7 +15,7 @@ impl<TypeName> List<TypeName> {
 
     // 获取链表的长度
     pub fn len(&self) -> usize {
-        match &self {
+        match self {
             List::Node(_, rest) => 1 + rest.len(),
             List::End => 0,
         }
@@ -27,8 +27,10 @@ where
     TypeName: std::fmt::Display,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &self {
-            List::Node(value, rest) => write!(f, "{} -> {}", value.to_string(), rest.to_string()),
+        match self {
+            List::Node(value, rest) => {
+                write!(f, "{} -> {}", value.to_string(), rest.to_string())
+            }
             List::End => write!(f, "End"),
         }
     }
