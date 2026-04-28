@@ -3,10 +3,7 @@ pub enum List<TypeName> {
     End,
 }
 
-impl<TypeName> List<TypeName>
-where
-    TypeName: std::fmt::Display,
-{
+impl<TypeName> List<TypeName> {
     pub fn new() -> List<TypeName> {
         List::End
     }
@@ -23,8 +20,13 @@ where
             List::End => 0,
         }
     }
+}
 
-    pub fn to_string(&self) -> String {
+impl<TypeName> ToString for List<TypeName>
+where
+    TypeName: std::fmt::Display,
+{
+    fn to_string(&self) -> String {
         match self {
             List::Node(value, rest) => format!("{} -> {}", value, rest.to_string()),
             List::End => "End".to_string(),
