@@ -15,21 +15,21 @@ impl<TypeName> List<TypeName> {
 
     // 获取链表的长度
     pub fn len(&self) -> usize {
-        match self {
+        match &self {
             List::Node(_, rest) => 1 + rest.len(),
             List::End => 0,
         }
     }
 }
 
-impl<TypeName> ToString for List<TypeName>
+impl<TypeName> std::fmt::Display for List<TypeName>
 where
     TypeName: std::fmt::Display,
 {
-    fn to_string(&self) -> String {
-        match self {
-            List::Node(value, rest) => format!("{} -> {}", value, rest.to_string()),
-            List::End => "End".to_string(),
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self {
+            List::Node(value, rest) => write!(f, "{} -> {}", value.to_string(), rest.to_string()),
+            List::End => write!(f, "End"),
         }
     }
 }

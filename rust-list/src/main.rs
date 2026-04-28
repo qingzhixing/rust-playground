@@ -5,6 +5,6 @@ fn main() {
     list = list.prepend(1);
     list = list.prepend(2);
     list = list.prepend(3);
-    println!("to string: {}", list.to_string());
     println!("length: {}", list.len());
+    println!("to string: {}", list.to_string());
 }
