@@ -10,14 +10,18 @@ fn main() -> eframe::Result {
 }
 
 #[derive(Default)]
-struct MyApp;
+struct MyApp {
+    counter: u32,
+}
 
 impl eframe::App for MyApp {
+    fn logic(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {}
+
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        // 在 `ui` 方法内部，你可以直接使用传入的 `ui` 参数
         ui.heading("Hello, egui!");
+        ui.label(format!("Counter: {}", self.counter));
         if ui.button("Click Me").clicked() {
-            println!("Button clicked");
+            self.counter += 1;
         }
     }
 }
