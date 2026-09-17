@@ -15,8 +15,6 @@ struct MyApp {
 }
 
 impl eframe::App for MyApp {
-    fn logic(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {}
-
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         ui.heading("Hello, egui!");
         ui.label(format!("Counter: {}", self.counter));
